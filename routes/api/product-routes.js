@@ -1,11 +1,7 @@
 const router = require('express').Router();
 const { Product, Category, Tag, ProductTag } = require('../../models');
 
-// The `/api/products` endpoint
-
-// get all products
 router.get('/', async (req, res) => {
-    // find all products
     // be sure to include its associated Category and Tag data
     try {
         const productData = await Product.findAll();
@@ -17,17 +13,15 @@ router.get('/', async (req, res) => {
 
 // get one product
 router.get('/:id', async (req, res) => {
-    // find a single product by its `id`
-    // be sure to include its associated Category and Tag data
     try {
-        const categoryData = await Product.findByPk(req.params.id, {
+        const productData = await Product.findByPk(req.params.id, {
             include: [Category, Tag]
         });
-        if (!categoryData) {
+        if (!productData) {
             res.status(404).json({ message: 'No category found with this id' });
             return;
         }
-        res.status(200).json(categoryData);
+        res.status(200).json(productData);
     } catch (err) {
         res.status(500).json(err);
     }
@@ -37,11 +31,11 @@ router.get('/:id', async (req, res) => {
 router.post('/', (req, res) => {
     /* req.body should look like this...
       {
-        product_name: "Basketball",
-        category_id: 1,
-        price: 200.00,
-        stock: 3,
-        tagIds: [1, 2, 3, 4]
+        "product_name": "Basketball",
+        "category_id": 1,
+        "price": 200.00,
+        "stock": 3,
+        "tagIds": [1, 2, 3, 4]
       }
     */
     Product.create(req.body)
@@ -112,14 +106,14 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     try {
-        const categoryData = await Product.destroy({
+        const productData = await Product.destroy({
             where: { id: req.params.id }
         });
-        if (!categoryData) {
+        if (!productData) {
             res.status(404).json({ message: 'No category found with this id' });
             return;
         }
-        res.status(200).json(categoryData);
+        res.status(200).json(productData);
     } catch (err) {
         res.status(500).json(err);
     }
