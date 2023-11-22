@@ -31,7 +31,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', (req, res) => {
     /* req.body should look like this...
       {
-        "product_name": "Basketball",
+        "product_name": "",
         "category_id": 1,
         "price": 200.00,
         "stock": 3,
@@ -40,17 +40,18 @@ router.post('/', (req, res) => {
     */
     Product.create(req.body)
         .then((product) => {
-            // if there's product tags, we need to create pairings to bulk create in the ProductTag model
+            // this checks if there are tagIds in the req.body and then creates associations between the new product and the tags
             if (req.body.tagIds.length) {
                 const productTagIdArr = req.body.tagIds.map((tag_id) => {
+                    //it also creates an object with the product id and the new tag id
                     return {
                         product_id: product.id,
                         tag_id,
                     };
                 });
+                //creates multiple productTag records
                 return ProductTag.bulkCreate(productTagIdArr);
             }
-            // if no product tags, just respond
             res.status(200).json(product);
         })
         .then((productTagIds) => res.status(200).json(productTagIds))
@@ -61,7 +62,6 @@ router.post('/', (req, res) => {
 });
 
 router.put('/:id', (req, res) => {
-    // updates product data
     Product.update(req.body, {
         where: {
             id: req.params.id,
@@ -73,8 +73,9 @@ router.put('/:id', (req, res) => {
                 ProductTag.findAll({
                     where: { product_id: req.params.id }
                 }).then((productTags) => {
-                    // creates filtered list of new tag_ids
+                    // extracts values from ProductTag
                     const productTagIds = productTags.map(({ tag_id }) => tag_id);
+                    //it filters the tags_id values from req.body to ensure that only new tags are included in the newProductTag
                     const newProductTags = req.body.tagIds
                         .filter((tag_id) => !productTagIds.includes(tag_id))
                         .map((tag_id) => {
@@ -84,11 +85,12 @@ router.put('/:id', (req, res) => {
                             };
                         });
 
-                    //this figures out which ones to remove
+                    //filters the productTags to find the ones with tag_id values not present in the req.body.tagIds
+                    //then extracts the id value of these records and stores them in the productTagsToRemove array
                     const productTagsToRemove = productTags
                         .filter(({ tag_id }) => !req.body.tagIds.includes(tag_id))
                         .map(({ id }) => id);
-                    // runs both actions
+                    // runs both asynchronous actions (destroy and cready)
                     return Promise.all([
                         ProductTag.destroy({ where: { id: productTagsToRemove } }),
                         ProductTag.bulkCreate(newProductTags),
