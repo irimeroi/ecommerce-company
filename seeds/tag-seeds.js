@@ -2,10 +2,10 @@ const { Tag } = require('../models');
 
 const tagData = [
   {
-    tag_name: 'rock music',
+    tag_name: 'size small/medium',
   },
   {
-    tag_name: 'pop music',
+    tag_name: 'size large/extra large',
   },
   {
     tag_name: 'blue',
@@ -20,10 +20,10 @@ const tagData = [
     tag_name: 'white',
   },
   {
-    tag_name: 'gold',
+    tag_name: 'size 5 to 7',
   },
   {
-    tag_name: 'pop culture',
+    tag_name: 'size 8 to 10',
   },
 ];
 

@@ -9,7 +9,7 @@ E-commerce company database that runs in the back end through the command line a
 ![Alt text](/assets/Thunder3.png)
 
 ## Walkthrough Video
-
+https://drive.google.com/file/d/1ca07foWjcUn3pz6wZw1XHH4sXf20hGV9/view
 
 ## Installation
 In order to use this application, the following packages need to be installed:
